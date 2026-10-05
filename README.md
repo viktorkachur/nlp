@@ -2,15 +2,12 @@
 
 Лабораторна робота № 8–10: бекенд (FastAPI) + локальний NLP-модуль + база даних + фронтенд (React) в одному застосунку.
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/viktorkachur/nlp/tree/Lab8-10)
+**Працюючий застосунок:** https://reviewai-assr.onrender.com (Swagger-документація API: `/docs`)
 
-## Розгортання на Render в один клік
-1. Натисніть кнопку **Deploy to Render** вище (потрібен безкоштовний акаунт Render, вхід через GitHub).
-   Якщо Render запропонує іншу гілку — оберіть **`Lab8-10`**.
-2. Render прочитає `render.yaml`, створить вебсервіс (Docker) і безкоштовну базу PostgreSQL та підключить їх між собою.
-3. Через 5–10 хвилин сайт буде доступний за адресою `https://reviewai-….onrender.com`.
-
-Альтернатива: у Render **New + → Blueprint** → обрати репозиторій `viktorkachur/nlp` → гілка `Lab8-10` → **Apply**.
+## Розгортання
+Застосунок розгорнуто на Render за Blueprint-файлом `render.yaml`: один вебсервіс (Docker: збірка React + FastAPI + NLP-модель)
+і безкоштовна база PostgreSQL, підключена змінною `DATABASE_URL`. Для власного розгортання: Render → **New + → Blueprint** →
+репозиторій `viktorkachur/nlp` → гілка `Lab8-10` → **Apply**.
 
 > Безкоштовний тариф Render «присипляє» сервіс після 15 хвилин простою: перший запит після паузи може тривати до хвилини
 > (інтерфейс показує відповідне повідомлення). Безкоштовна база PostgreSQL діє 30 днів.
