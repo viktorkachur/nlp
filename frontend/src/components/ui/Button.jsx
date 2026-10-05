@@ -7,7 +7,7 @@ import styles from './Button.module.css'
  * Якщо передано `to` — рендериться як посилання (React Router).
  * Стан loading блокує повторне натискання (запобігання помилкам).
  */
-export default function Button({ variant = 'primary', size = 'md', loading = false, to, icon: Icon, children, className = '', ...rest }) {
+export default function Button({ variant = 'primary', size = 'md', loading = false, to, icon: Icon, children, className = '', type = 'button', ...rest }) {
   const cls = `${styles.btn} ${styles[variant]} ${styles[size]} ${className}`
   const content = (
     <>
@@ -16,5 +16,5 @@ export default function Button({ variant = 'primary', size = 'md', loading = fal
     </>
   )
   if (to) return <Link to={to} className={cls} {...rest}>{content}</Link>
-  return <button className={cls} disabled={loading || rest.disabled} {...rest}>{content}</button>
+  return <button type={type} className={cls} disabled={loading || rest.disabled} {...rest}>{content}</button>
 }

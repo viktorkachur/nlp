@@ -8,7 +8,7 @@ export default function Tabs({ items, value, onChange, className = '' }) {
   return (
     <div className={`${styles.tabs} ${className}`} role="tablist">
       {items.map((t) => (
-        <button key={t.value} role="tab" aria-selected={value === t.value} className={`${styles.tab} ${value === t.value ? styles.active : ''}`} onClick={() => onChange(t.value)}>
+        <button type="button" key={t.value} role="tab" aria-selected={value === t.value} className={`${styles.tab} ${value === t.value ? styles.active : ''}`} onClick={() => onChange(t.value)}>
           {value === t.value && <motion.span layoutId={uid} className={styles.thumb} transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
           <span className={styles.label}>{t.label}{t.count != null && <em>{t.count}</em>}</span>
         </button>

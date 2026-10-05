@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Download, FileSpreadsheet, FileText, Printer } from 'lucide-react'
 import { api } from '../api/mockApi'
 import { useAsync } from '../hooks/useAsync'
+import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { SENTIMENTS } from '../data/seed'
 import PageHeader from '../components/layout/PageHeader'
@@ -64,6 +65,7 @@ function Preview({ report, onClose }) {
 /** Звіти: формування (CSV / PDF) та історія раніше створених звітів. */
 export default function Reports() {
   const toast = useToast()
+  const { user } = useAuth()
   const sets = useAsync(() => api.listSets(), [])
   const reports = useAsync(() => api.listReports(), [])
   const [setId, setSetId] = useState('')
@@ -78,7 +80,7 @@ export default function Reports() {
     setError('')
     setBusy(true)
     try {
-      const rep = await api.createReport({ setId: Number(setId), format }) // POST /sets/{id}/report
+      const rep = await api.createReport({ setId: Number(setId), format, author: user.name }) // POST /sets/{id}/report
       toast(`Звіт ${format.toUpperCase()} сформовано`)
       reports.reload()
       if (format === 'csv') await download({ ...rep, setName: sets.data.find((s) => s.id === rep.setId).name })

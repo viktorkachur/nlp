@@ -209,11 +209,11 @@ export const api = {
     const d = load()
     return d.reports.map((r) => ({ ...r, setName: d.sets.find((s) => s.id === r.setId)?.name || '—' })).sort((a, b) => b.id - a.id)
   },
-  async createReport({ setId, format }) {
+  async createReport({ setId, format, author = 'Ви' }) {
     await latency(500, 900)
     const d = load()
     if (!d.sets.find((s) => s.id === setId)) throw new ApiError('Оберіть набір відгуків', 422, { setId: 'Обов’язкове поле' })
-    const rep = { id: nextId(d.reports), setId, format, created: today(), author: 'Ви' }
+    const rep = { id: nextId(d.reports), setId, format, created: today(), author }
     d.reports.push(rep)
     save()
     return rep
