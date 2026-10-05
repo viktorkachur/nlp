@@ -1,0 +1,27 @@
+# Render Blueprint: один вебсервіс (FastAPI + зібраний React) і безкоштовна база PostgreSQL.
+# Розгортання в один клік: кнопка «Deploy to Render» у README.md
+services:
+  - type: web
+    name: reviewai
+    runtime: docker
+    plan: free
+    branch: Lab8-10
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: reviewai-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SEED_DEMO
+        value: "true"
+
+databases:
+  - name: reviewai-db
+    plan: free
+    databaseName: reviewai
+    user: reviewai

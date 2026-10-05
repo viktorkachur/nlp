@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+backend/data/
+backend/static/
+backend/app/nlp/artifacts/*.joblib
+backend/.pytest_cache/
+frontend/node_modules/
+frontend/dist/
+.env

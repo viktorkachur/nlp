@@ -1,31 +1,91 @@
-# Відгуки.AI — фронтенд системи інтелектуального аналізу відгуків
+# Відгуки.AI — система інтелектуального аналізу відгуків користувачів
 
-Лабораторна робота № 6–7: розроблення фронтенду програмного продукту.
+Лабораторна робота № 8–10: бекенд (FastAPI) + локальний NLP-модуль + база даних + фронтенд (React) в одному застосунку.
 
-**Демо:** https://viktorkachur.github.io/nlp/
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/viktorkachur/nlp/tree/Lab8-10)
 
-Фронтенд на React (Vite) із фейковим REST API (дані демонстраційні, зберігаються в `localStorage`).
-Серверна частина (FastAPI) і локальний NLP-модуль будуть підключені в наступних роботах.
+## Розгортання на Render в один клік
+1. Натисніть кнопку **Deploy to Render** вище (потрібен безкоштовний акаунт Render, вхід через GitHub).
+   Якщо Render запропонує іншу гілку — оберіть **`Lab8-10`**.
+2. Render прочитає `render.yaml`, створить вебсервіс (Docker) і безкоштовну базу PostgreSQL та підключить їх між собою.
+3. Через 5–10 хвилин сайт буде доступний за адресою `https://reviewai-….onrender.com`.
 
-## Можливості
-- лендінг із анімаціями та інтерактивним мініаналізатором відгуків;
-- двоетапний вхід (пароль + код підтвердження) та реєстрація з валідацією;
-- панель аналізу: тональність, динаміка, теми, ключові слова;
-- набори відгуків (CRUD), список відгуків з фільтрами, пошуком і пагінацією;
-- майстер імпорту CSV/TXT з прогресом аналізу;
-- звіти (CSV, PDF через друк), адміністрування ролей;
-- адаптивна верстка (desktop + mobile).
+Альтернатива: у Render **New + → Blueprint** → обрати репозиторій `viktorkachur/nlp` → гілка `Lab8-10` → **Apply**.
 
-Демо-акаунти: `analyst@example.com`, `manager@example.com`, `admin@example.com`; пароль `Demo12345`, код `123456`.
+> Безкоштовний тариф Render «присипляє» сервіс після 15 хвилин простою: перший запит після паузи може тривати до хвилини
+> (інтерфейс показує відповідне повідомлення). Безкоштовна база PostgreSQL діє 30 днів.
 
-## Запуск
+## Демо-доступ
+Під час першого запуску створюються демонстраційні дані (відгуки проходять через справжню NLP-модель):
+
+| Роль | E-mail | Пароль |
+|---|---|---|
+| Аналітик | `analyst@example.com` | `Demo12345` |
+| Менеджер продукту | `manager@example.com` | `Demo12345` |
+| Адміністратор | `admin@example.com` | `Demo12345` |
+
+Також можна **зареєструватися** (отримаєте роль аналітика) і завантажити власні відгуки у форматі CSV / TXT.
+Для відключення демо-даних встановіть `SEED_DEMO=false`.
+
+## Архітектура
+```
+React (Vite) ── HTTP / JSON ──▶ FastAPI ──▶ сервіси ──▶ SQLAlchemy ──▶ PostgreSQL / SQLite
+                                   │
+                                   └──▶ NLP-модуль (scikit-learn): тональність, теми, ключові слова
+```
+Фронтенд збирається в Docker-образі й віддається самим сервером, тому CORS не потрібен.
+
+## Локальний запуск
 ```bash
+# бекенд
+cd backend
+python -m venv .venv && .venv/Scripts/activate        # Linux/macOS: source .venv/bin/activate
+pip install -r requirements-dev.txt
+python -m app.nlp.train                               # навчання NLP-моделі (кілька секунд)
+uvicorn app.main:app --reload                         # http://localhost:8000  (Swagger: /docs)
+
+# фронтенд (у режимі розробки, проксі на :8000)
 cd frontend
 npm install
-npm run dev      # режим розробки
-npm run build    # збірка у frontend/dist
+npm run dev                                           # http://localhost:5173
 ```
-Зібрана версія для GitHub Pages лежить у каталозі `docs/`.
+Без `DATABASE_URL` використовується SQLite (`backend/data/reviews.db`). Для PostgreSQL:
+`DATABASE_URL=postgresql://user:pass@host:5432/db`.
 
-## Стек
-React 19, Vite, React Router (HashRouter), Framer Motion, Lucide Icons, CSS Modules.
+Тести: `cd backend && pytest -q` (41 тест: API, автентифікація, авторизація, імпорт, аналіз, NLP).
+
+## REST API (префікс `/api`, документація — `/docs`)
+| Метод | Адреса | Призначення | Доступ |
+|---|---|---|---|
+| GET | `/health` | перевірка стану сервера й БД | усі |
+| POST | `/auth/register`, `/auth/login` | реєстрація, вхід (JWT) | усі |
+| GET | `/auth/me` | поточний користувач | авторизовані |
+| POST | `/analyze-text` | миттєвий NLP-аналіз тексту | усі (ліміт запитів) |
+| GET, POST | `/sets` | список / створення наборів | авторизовані / аналітик |
+| GET, PATCH, DELETE | `/sets/{id}` | набір | власник (читання: менеджер, адмін) |
+| GET, POST | `/sets/{id}/reviews` | відгуки з фільтрами / додавання | авторизовані / власник |
+| DELETE | `/reviews/{id}` | видалення відгуку | власник |
+| POST | `/sets/{id}/import` | імпорт CSV / TXT (multipart) | власник |
+| POST | `/sets/{id}/analyze` | запуск аналізу (фонове завдання) | власник |
+| GET | `/sets/{id}/status` | прогрес аналізу | авторизовані |
+| GET | `/stats?setId=` | статистика | авторизовані |
+| GET, POST | `/reports`, `/sets/{id}/reports` | звіти | аналітик, менеджер |
+| GET | `/reports/{id}/download` | завантаження CSV | аналітик, менеджер |
+| GET, PATCH | `/users`, `/users/{id}` | керування ролями | адміністратор |
+
+Помилки мають єдиний формат: `{"status": 404, "message": "...", "fields": {...}}`.
+
+## NLP-модуль (`backend/app/nlp`)
+* **Тональність** — ансамбль: TF-IDF (символьні n-грами + слова з маркуванням заперечень) + логістична регресія,
+  та лексичний аналізатор (укр. / англ.) з запереченнями, підсилювачами й протиставленнями («але»).
+  Модель навчається на згенерованому корпусі (`dataset.py`) командою `python -m app.nlp.train`.
+* **Теми** — словник аспектів (швидкодія, інтерфейс, підтримка, ціна, доставка …).
+* **Ключові слова** — TF-IDF за корпусом набору з підвищенням ваги тематичних та оцінних слів.
+* Усе виконується локально, без зовнішніх API.
+
+## Структура
+```
+backend/   app/{routers,services,nlp,models.py,schemas.py,security.py,...}, tests/, requirements*.txt
+frontend/  src/{api,pages,components,context,hooks,...}  (Vite + React)
+Dockerfile, render.yaml
+```

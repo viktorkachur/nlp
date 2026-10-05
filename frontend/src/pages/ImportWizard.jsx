@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AlertTriangle, Check, FileText, Sparkles, UploadCloud, Wand2 } from 'lucide-react'
-import { api } from '../api/mockApi'
+import { api } from '../api/client'
 import { useAsync } from '../hooks/useAsync'
 import { useToast } from '../context/ToastContext'
 import { MAX_SIZE, SAMPLE, parseReviews } from '../lib/parse'
@@ -55,11 +55,12 @@ export default function ImportWizard() {
     if (f.size > MAX_SIZE) return setError('Файл перевищує 10 МБ')
     const parsed = parseReviews(await f.text(), f.name)
     if (!parsed.rows.length) return setError('У файлі не знайдено жодного коректного відгуку')
-    setFile({ name: f.name, size: f.size, ...parsed })
+    setFile({ name: f.name, size: f.size, blob: f, ...parsed })
   }
   const useSample = () => {
     setError('')
-    setFile({ name: 'приклад_відгуків.csv', size: SAMPLE.length, ...parseReviews(SAMPLE, 'sample.txt') })
+    const name = 'приклад_відгуків.txt'
+    setFile({ name, size: SAMPLE.length, blob: new File([SAMPLE], name, { type: 'text/plain' }), ...parseReviews(SAMPLE, name) })
   }
 
   const next = () => {
@@ -75,7 +76,7 @@ export default function ImportWizard() {
     setStep(2)
     setProgress(0)
     try {
-      await api.importReviews(Number(setId), file.rows) // POST /sets/{id}/import
+      await api.importFile(Number(setId), file.blob) // POST /sets/{id}/import (multipart)
       const r = await api.analyzeSet(Number(setId), setProgress) // POST /sets/{id}/analyze
       setResult(r)
       toast('Імпорт і аналіз завершено')

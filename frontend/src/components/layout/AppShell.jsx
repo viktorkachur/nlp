@@ -1,10 +1,8 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BarChart3, FileText, Layers, LayoutDashboard, LogOut, UploadCloud, Users, RotateCcw } from 'lucide-react'
+import { FileText, Layers, LayoutDashboard, LogOut, UploadCloud, Users, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
-import { useToast } from '../../context/ToastContext'
 import { ROLES } from '../../data/seed'
-import { api } from '../../api/mockApi'
 import Logo from '../brand/Logo'
 import Mascot from '../brand/Mascot'
 import styles from './AppShell.module.css'
@@ -25,8 +23,7 @@ export const ROLE_NAV = {
 
 /** Каркас застосунку: бічне меню (desktop), нижня панель (mobile), верхня панель та область контенту. */
 export default function AppShell() {
-  const { user, signOut, switchRole } = useAuth()
-  const toast = useToast()
+  const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const items = ROLE_NAV[user.role].map((k) => NAV[k])
@@ -35,13 +32,6 @@ export default function AppShell() {
     signOut()
     navigate('/')
   }
-  const reset = async () => {
-    await api.resetDemo()
-    toast('Демо-дані відновлено', 'info')
-    navigate('/app')
-    setTimeout(() => window.location.reload(), 400)
-  }
-
   return (
     <div className={styles.shell}>
       <aside className={styles.side}>
@@ -61,8 +51,7 @@ export default function AppShell() {
         </nav>
         <div className={styles.demo}>
           <Mascot mood="happy" size={64} float />
-          <p><b>Демо-режим</b><br />Дані фейкові й зберігаються лише у вашому браузері.</p>
-          <button onClick={reset}><RotateCcw size={14} /> Скинути дані</button>
+          <p><b>Підключено до сервера</b><br />Дані зберігаються в базі даних, аналіз виконує локальна NLP-модель.</p>
         </div>
       </aside>
 
@@ -70,12 +59,7 @@ export default function AppShell() {
         <header className={styles.top}>
           <div className={styles.topLogo}><Logo to="/app" /></div>
           <div className={styles.topSpacer} />
-          <label className={styles.role}>
-            <BarChart3 size={16} />
-            <select value={user.role} onChange={(e) => { switchRole(e.target.value); navigate('/app') }} aria-label="Демонстраційна роль">
-              {Object.entries(ROLES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-            </select>
-          </label>
+          <span className={styles.role}><ShieldCheck size={16} />{ROLES[user.role]}</span>
           <div className={styles.user}>
             <span className={styles.avatar}>{user.name.split(' ').map((p) => p[0]).join('')}</span>
             <span className={styles.uname}>{user.name}</span>

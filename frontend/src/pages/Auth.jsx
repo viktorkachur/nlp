@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowLeft, Eye, EyeOff, ShieldCheck } from 'lucide-react'
-import { api, ApiError } from '../api/mockApi'
+import { motion } from 'framer-motion'
+import { Eye, EyeOff, ShieldCheck } from 'lucide-react'
+import { api, ApiError } from '../api/client'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
-import { DEMO_ACCOUNTS, DEMO_CODE, DEMO_PASSWORD, ROLES } from '../data/seed'
+import { DEMO_ACCOUNTS, DEMO_PASSWORD, ROLES } from '../data/seed'
 import Logo from '../components/brand/Logo'
 import Mascot from '../components/brand/Mascot'
 import Button from '../components/ui/Button'
@@ -25,39 +25,7 @@ function strength(p) {
   return s
 }
 
-/** Поле введення 6-значного коду: автоперехід між клітинками, Backspace та вставка з буфера. */
-function CodeInput({ value, onChange, error }) {
-  const refs = useRef([])
-  useEffect(() => refs.current[0]?.focus(), [])
-  const set = (i, ch) => {
-    const arr = value.padEnd(6, ' ').split('')
-    arr[i] = ch || ' '
-    onChange(arr.join('').trimEnd().replace(/ /g, ''))
-    if (ch && i < 5) refs.current[i + 1]?.focus()
-  }
-  return (
-    <div className={`${styles.code} ${error ? styles.codeErr : ''}`}>
-      {Array.from({ length: 6 }, (_, i) => (
-        <input
-          key={i}
-          ref={(el) => (refs.current[i] = el)}
-          value={value[i] || ''}
-          inputMode="numeric"
-          maxLength={1}
-          aria-label={`Цифра ${i + 1}`}
-          onChange={(e) => /^\d?$/.test(e.target.value) && set(i, e.target.value)}
-          onKeyDown={(e) => e.key === 'Backspace' && !value[i] && i > 0 && refs.current[i - 1]?.focus()}
-          onPaste={(e) => {
-            const t = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6)
-            if (t) { e.preventDefault(); onChange(t); refs.current[Math.min(t.length, 5)]?.focus() }
-          }}
-        />
-      ))}
-    </div>
-  )
-}
-
-/** Сторінка входу / реєстрації. Вхід двокроковий: пароль → код підтвердження (імітація 2FA). */
+/** Сторінка входу / реєстрації. Дані перевіряються на клієнті, а потім повторно – на сервері. */
 export default function Auth() {
   const { user, signIn } = useAuth()
   const toast = useToast()
@@ -65,13 +33,10 @@ export default function Auth() {
   const from = useLocation().state?.from || '/app'
 
   const [mode, setMode] = useState('login')
-  const [step, setStep] = useState(1)
-  const [challenge, setChallenge] = useState(null)
   const [show, setShow] = useState(false)
   const [busy, setBusy] = useState(false)
   const [errors, setErrors] = useState({})
   const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
-  const [code, setCode] = useState('')
 
   if (user) return <Navigate to="/app" replace />
 
@@ -95,35 +60,12 @@ export default function Auth() {
     if (Object.keys(e).length) return
     setBusy(true)
     try {
-      if (mode === 'login') {
-        const r = await api.login(form) // POST /auth/login
-        setChallenge(r.challenge)
-        setStep(2)
-      } else {
-        const r = await api.register(form) // POST /auth/register
-        signIn(r.user)
-        toast('Акаунт створено. Ласкаво просимо!')
-        navigate('/app')
-      }
-    } catch (err) {
-      setErrors(err instanceof ApiError ? { ...err.fields, form: err.message } : { form: 'Помилка мережі. Спробуйте пізніше.' })
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  const verify = async (ev) => {
-    ev.preventDefault()
-    if (code.length < 6) return setErrors({ code: 'Введіть усі 6 цифр' })
-    setBusy(true)
-    try {
-      const r = await api.verifyCode({ challenge, code }) // POST /auth/verify
+      const r = mode === 'login' ? await api.login(form) : await api.register(form) // POST /auth/login | /auth/register
       signIn(r.user)
-      toast(`Вітаємо, ${r.user.name.split(' ')[0]}!`)
+      toast(mode === 'login' ? `Вітаємо, ${r.user.name.split(' ')[0]}!` : 'Акаунт створено. Ласкаво просимо!')
       navigate(from)
     } catch (err) {
-      setErrors({ code: err.message })
-      setCode('')
+      setErrors(err instanceof ApiError ? { ...err.fields, form: err.message } : { form: 'Помилка мережі. Спробуйте пізніше.' })
     } finally {
       setBusy(false)
     }
@@ -142,67 +84,48 @@ export default function Auth() {
         </div>
         <ul>
           <li><ShieldCheck size={18} /> Дані не залишають ваш сервер</li>
-          <li><ShieldCheck size={18} /> Двоетапна перевірка входу</li>
+          <li><ShieldCheck size={18} /> Паролі хешуються, доступ — за токеном</li>
         </ul>
         <i className={styles.blob1} /><i className={styles.blob2} />
       </aside>
 
       <main className={styles.main}>
-        <div className={styles.box}>
-          <AnimatePresence mode="wait">
-            {step === 1 ? (
-              <motion.div key="s1" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.25 }}>
-                <div className={styles.mobileLogo}><Logo /></div>
-                <Tabs value={mode} onChange={(m) => { setMode(m); setErrors({}) }} items={[{ value: 'login', label: 'Вхід' }, { value: 'register', label: 'Реєстрація' }]} />
-                <h1>{mode === 'login' ? 'З поверненням!' : 'Створіть акаунт'}</h1>
-                <p className={styles.sub}>{mode === 'login' ? 'Увійдіть, щоб побачити результати аналізу.' : 'Це займе менше хвилини.'}</p>
+        <motion.div className={styles.box} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.25 }}>
+          <div className={styles.mobileLogo}><Logo /></div>
+          <Tabs value={mode} onChange={(m) => { setMode(m); setErrors({}) }} items={[{ value: 'login', label: 'Вхід' }, { value: 'register', label: 'Реєстрація' }]} />
+          <h1>{mode === 'login' ? 'З поверненням!' : 'Створіть акаунт'}</h1>
+          <p className={styles.sub}>{mode === 'login' ? 'Увійдіть, щоб побачити результати аналізу.' : 'Це займе менше хвилини. Ви станете аналітиком і зможете завантажувати власні відгуки.'}</p>
 
-                <form onSubmit={submit} noValidate className={styles.form}>
-                  {mode === 'register' && <Field label="Ім’я" value={form.name} error={errors.name} onChange={set('name')} autoComplete="name" />}
-                  <Field label="Електронна пошта" type="email" value={form.email} error={errors.email} onChange={set('email')} autoComplete="email" placeholder="name@example.com" />
-                  <div className={styles.pass}>
-                    <Field label="Пароль" type={show ? 'text' : 'password'} value={form.password} error={errors.password} onChange={set('password')} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
-                    <button type="button" className={styles.eye} onClick={() => setShow(!show)} aria-label={show ? 'Сховати пароль' : 'Показати пароль'}>{show ? <EyeOff size={18} /> : <Eye size={18} />}</button>
-                  </div>
-                  {mode === 'register' && (
-                    <>
-                      <div className={styles.meter} aria-hidden="true">
-                        {[0, 1, 2, 3].map((i) => <motion.i key={i} animate={{ backgroundColor: i < sc ? ['#e5392b', '#f9bd2b', '#8fc95a', '#3fa66b'][sc - 1] : '#e5e7e0' }} />)}
-                        <span>{['Дуже слабкий', 'Слабкий', 'Середній', 'Добрий', 'Надійний'][sc]}</span>
-                      </div>
-                      <Field label="Підтвердіть пароль" type={show ? 'text' : 'password'} value={form.confirm} error={errors.confirm} onChange={set('confirm')} autoComplete="new-password" />
-                    </>
-                  )}
-                  {errors.form && <p className={styles.formErr} role="alert">{errors.form}</p>}
-                  <Button type="submit" size="lg" loading={busy}>{mode === 'login' ? 'Увійти' : 'Створити акаунт'}</Button>
-                </form>
-
-                {mode === 'login' && (
-                  <div className={styles.demo}>
-                    <span className="hand">демо-доступ — оберіть роль:</span>
-                    <div>
-                      {DEMO_ACCOUNTS.map((u) => <button key={u.id} type="button" onClick={() => fill(u)}>{ROLES[u.role]}</button>)}
-                    </div>
-                    <small>Пароль: {DEMO_PASSWORD} · код підтвердження: {DEMO_CODE}</small>
-                  </div>
-                )}
-              </motion.div>
-            ) : (
-              <motion.div key="s2" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.25 }}>
-                <button className={styles.back} onClick={() => { setStep(1); setCode(''); setErrors({}) }}><ArrowLeft size={16} /> Назад</button>
-                <span className={styles.shield}><ShieldCheck size={30} /></span>
-                <h1>Підтвердіть вхід</h1>
-                <p className={styles.sub}>Ми надіслали 6-значний код на <b>{form.email}</b>. Введіть його нижче.</p>
-                <form onSubmit={verify} className={styles.form} noValidate>
-                  <CodeInput value={code} onChange={(v) => { setCode(v); setErrors({}) }} error={errors.code} />
-                  {errors.code && <p className={styles.formErr} role="alert">{errors.code}</p>}
-                  <Button type="submit" size="lg" loading={busy}>Підтвердити</Button>
-                </form>
-                <small className={styles.hint}>Демо-код: <b>{DEMO_CODE}</b></small>
-              </motion.div>
+          <form onSubmit={submit} noValidate className={styles.form}>
+            {mode === 'register' && <Field label="Ім’я" value={form.name} error={errors.name} onChange={set('name')} autoComplete="name" />}
+            <Field label="Електронна пошта" type="email" value={form.email} error={errors.email} onChange={set('email')} autoComplete="email" placeholder="name@example.com" />
+            <div className={styles.pass}>
+              <Field label="Пароль" type={show ? 'text' : 'password'} value={form.password} error={errors.password} onChange={set('password')} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} />
+              <button type="button" className={styles.eye} onClick={() => setShow(!show)} aria-label={show ? 'Сховати пароль' : 'Показати пароль'}>{show ? <EyeOff size={18} /> : <Eye size={18} />}</button>
+            </div>
+            {mode === 'register' && (
+              <>
+                <div className={styles.meter} aria-hidden="true">
+                  {[0, 1, 2, 3].map((i) => <motion.i key={i} animate={{ backgroundColor: i < sc ? ['#e5392b', '#f9bd2b', '#8fc95a', '#3fa66b'][sc - 1] : '#e5e7e0' }} />)}
+                  <span>{['Дуже слабкий', 'Слабкий', 'Середній', 'Добрий', 'Надійний'][sc]}</span>
+                </div>
+                <Field label="Підтвердіть пароль" type={show ? 'text' : 'password'} value={form.confirm} error={errors.confirm} onChange={set('confirm')} autoComplete="new-password" />
+              </>
             )}
-          </AnimatePresence>
-        </div>
+            {errors.form && <p className={styles.formErr} role="alert">{errors.form}</p>}
+            <Button type="submit" size="lg" loading={busy}>{mode === 'login' ? 'Увійти' : 'Створити акаунт'}</Button>
+          </form>
+
+          {mode === 'login' && (
+            <div className={styles.demo}>
+              <span className="hand">демо-доступ — оберіть роль:</span>
+              <div>
+                {DEMO_ACCOUNTS.map((u) => <button key={u.email} type="button" onClick={() => fill(u)}>{ROLES[u.role]}</button>)}
+              </div>
+              <small>Пароль демо-акаунтів: {DEMO_PASSWORD}. Або зареєструйтесь і завантажте власні відгуки.</small>
+            </div>
+          )}
+        </motion.div>
       </main>
     </div>
   )

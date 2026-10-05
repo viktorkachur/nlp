@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { api } from '../api/mockApi'
+import { api } from '../api/client'
 import { useAsync } from '../hooks/useAsync'
 import { useToast } from '../context/ToastContext'
 import { ROLES } from '../data/seed'

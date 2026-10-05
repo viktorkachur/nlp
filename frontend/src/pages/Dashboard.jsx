@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Gauge, Hash, MessageSquareText, Smile } from 'lucide-react'
-import { api } from '../api/mockApi'
+import { api } from '../api/client'
 import { useAsync } from '../hooks/useAsync'
 import { useCountUp } from '../hooks/useCountUp'
 import { SENTIMENTS } from '../data/seed'
@@ -28,7 +28,7 @@ function Stat({ icon: Icon, label, value, suffix = '', decimals = 0, color, spar
         <p className={styles.statLabel}>{label}</p>
         <b className={styles.statValue}>{v.toFixed(decimals)}{suffix}</b>
       </div>
-      <div className={styles.spark}><Sparkline values={spark} color={color} /></div>
+      {spark && <div className={styles.spark}><Sparkline values={spark} color={color} /></div>}
     </Card>
   )
 }
@@ -68,8 +68,8 @@ export default function Dashboard() {
           <div className={styles.grid4}>
             <Stat icon={MessageSquareText} label="Проаналізовано відгуків" value={s.total} color="var(--blue)" spark={s.weeks.map((w) => w.positive + w.neutral + w.negative)} />
             <Stat icon={Smile} label="Позитивних" value={share('positive')} suffix="%" color="var(--green)" spark={s.weeks.map((w) => w.positive)} />
-            <Stat icon={Gauge} label="Середня впевненість" value={s.avgConfidence * 100} suffix="%" color="var(--orange)" spark={[62, 70, 68, 76, 81, 79, 84, s.avgConfidence * 100]} />
-            <Stat icon={Hash} label="Виявлено тем" value={s.topics.filter((t) => t.topic !== 'Без теми').length} color="#b86e00" spark={[3, 4, 4, 5, 5, 5, 6, s.topics.length]} />
+            <Stat icon={Gauge} label="Середня впевненість" value={s.avgConfidence * 100} suffix="%" color="var(--orange)" />
+            <Stat icon={Hash} label="Виявлено тем" value={s.topics.filter((t) => t.topic !== 'Без теми').length} color="#b86e00" />
           </div>
 
           <div className={styles.row2}>

@@ -1,0 +1,67 @@
+{
+  "corpus_size": 4200,
+  "train_size": 3570,
+  "holdout": {
+    "lexicon": {
+      "accuracy": 0.7635,
+      "macro_f1": 0.7557
+    },
+    "ml": {
+      "accuracy": 0.9841,
+      "macro_f1": 0.9841
+    },
+    "ensemble": {
+      "accuracy": 0.9968,
+      "macro_f1": 0.9968
+    },
+    "confusion_matrix": [
+      [
+        210,
+        0,
+        0
+      ],
+      [
+        1,
+        209,
+        0
+      ],
+      [
+        1,
+        0,
+        209
+      ]
+    ]
+  },
+  "handmade_test": {
+    "lexicon": {
+      "accuracy": 0.8226,
+      "macro_f1": 0.814
+    },
+    "ml": {
+      "accuracy": 0.8065,
+      "macro_f1": 0.8076
+    },
+    "ensemble": {
+      "accuracy": 0.9194,
+      "macro_f1": 0.9175
+    },
+    "confusion_matrix": [
+      [
+        20,
+        0,
+        1
+      ],
+      [
+        2,
+        16,
+        2
+      ],
+      [
+        0,
+        0,
+        21
+      ]
+    ]
+  },
+  "train_seconds": 2.9
+}

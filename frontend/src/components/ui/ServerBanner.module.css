@@ -1,0 +1,4 @@
+.bar { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 300; display: flex; align-items: center; gap: 10px; background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 99px; font-weight: 600; font-size: 14px; box-shadow: var(--shadow-soft); max-width: calc(100vw - 24px); }
+.bar span { line-height: 1.3; }
+.spin { animation: spin 0.9s linear infinite; flex-shrink: 0; color: var(--yellow); }
+@keyframes spin { to { transform: rotate(360deg); } }

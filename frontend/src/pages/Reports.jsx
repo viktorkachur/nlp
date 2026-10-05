@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Download, FileSpreadsheet, FileText, Printer } from 'lucide-react'
-import { api } from '../api/mockApi'
+import { api } from '../api/client'
 import { useAsync } from '../hooks/useAsync'
-import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { SENTIMENTS } from '../data/seed'
 import PageHeader from '../components/layout/PageHeader'
@@ -16,15 +15,12 @@ import Skeleton from '../components/ui/Skeleton'
 import { Pill } from '../components/ui/Badge'
 import styles from './Reports.module.css'
 
-/** Формує CSV-файл із результатів аналізу та ініціює його завантаження в браузері. */
-function downloadCsv(name, rows) {
-  const esc = (v) => `"${String(v).replace(/"/g, '""')}"`
-  const head = ['id', 'текст', 'тональність', 'впевненість', 'тема', 'ключові слова', 'дата']
-  const lines = rows.map((r) => [r.id, r.text, SENTIMENTS[r.analysis.sentiment].label, r.analysis.confidence, r.analysis.topic || '', r.analysis.keywords.join(' '), r.created].map(esc).join(','))
-  const blob = new Blob(['﻿' + [head.join(','), ...lines].join('\n')], { type: 'text/csv;charset=utf-8' })
+/** Завантажує CSV-звіт із сервера (GET /reports/{id}/download) і зберігає його як файл. */
+async function downloadCsv(report) {
+  const blob = await api.downloadReport(report.id)
   const a = document.createElement('a')
   a.href = URL.createObjectURL(blob)
-  a.download = `${name}.csv`
+  a.download = `report_${report.setName}.csv`
   a.click()
   URL.revokeObjectURL(a.href)
 }
@@ -65,8 +61,7 @@ function Preview({ report, onClose }) {
 /** Звіти: формування (CSV / PDF) та історія раніше створених звітів. */
 export default function Reports() {
   const toast = useToast()
-  const { user } = useAuth()
-  const sets = useAsync(() => api.listSets(), [])
+    const sets = useAsync(() => api.listSets(), [])
   const reports = useAsync(() => api.listReports(), [])
   const [setId, setSetId] = useState('')
   const [format, setFormat] = useState('csv')
@@ -80,7 +75,7 @@ export default function Reports() {
     setError('')
     setBusy(true)
     try {
-      const rep = await api.createReport({ setId: Number(setId), format, author: user.name }) // POST /sets/{id}/report
+      const rep = await api.createReport({ setId: Number(setId), format, }) // POST /sets/{id}/report
       toast(`Звіт ${format.toUpperCase()} сформовано`)
       reports.reload()
       if (format === 'csv') await download({ ...rep, setName: sets.data.find((s) => s.id === rep.setId).name })
@@ -94,8 +89,11 @@ export default function Reports() {
 
   const download = async (r) => {
     if (r.format === 'pdf') return setPreview(r)
-    const rows = await api.getReportRows(r.setId)
-    downloadCsv(`report_${r.setName}`, rows)
+    try {
+      await downloadCsv(r)
+    } catch (e) {
+      toast(e.message, 'error')
+    }
   }
 
   return (

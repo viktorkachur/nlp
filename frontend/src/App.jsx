@@ -10,10 +10,13 @@ import ImportWizard from './pages/ImportWizard'
 import Reports from './pages/Reports'
 import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
+import ServerBanner from './components/ui/ServerBanner'
 
 /** Карта маршрутів застосунку (відповідає карті навігації з звіту). */
 export default function App() {
   return (
+    <>
+    <ServerBanner />
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Auth />} />
@@ -28,5 +31,6 @@ export default function App() {
       <Route path="/home" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </>
   )
 }

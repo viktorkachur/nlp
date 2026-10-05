@@ -1,17 +1,18 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { tokenStore } from '../api/client'
 
 const AuthContext = createContext(null)
 const KEY = 'reviewai.session'
 
 function readSession() {
   try {
-    return JSON.parse(localStorage.getItem(KEY)) || null
+    return tokenStore.get() ? JSON.parse(localStorage.getItem(KEY)) || null : null
   } catch {
     return null
   }
 }
 
-/** Глобальний стан автентифікації: поточний користувач та його роль. */
+/** Глобальний стан автентифікації: поточний користувач (токен зберігається в api/client). */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(readSession)
 
@@ -22,13 +23,17 @@ export function AuthProvider({ children }) {
 
   const signOut = useCallback(() => {
     setUser(null)
+    tokenStore.clear()
     try { localStorage.removeItem(KEY) } catch { /* ignore */ }
   }, [])
 
-  // демонстраційне перемикання ролі (показує розмежування доступу в меню)
-  const switchRole = useCallback((role) => signIn({ ...user, role }), [user, signIn])
+  // сервер відхилив токен (прострочений / недійсний) — виходимо з системи
+  useEffect(() => {
+    window.addEventListener('auth-expired', signOut)
+    return () => window.removeEventListener('auth-expired', signOut)
+  }, [signOut])
 
-  const value = useMemo(() => ({ user, signIn, signOut, switchRole }), [user, signIn, signOut, switchRole])
+  const value = useMemo(() => ({ user, signIn, signOut }), [user, signIn, signOut])
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 

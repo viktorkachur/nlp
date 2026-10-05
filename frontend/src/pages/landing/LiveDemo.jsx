@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Sparkles } from 'lucide-react'
-import { analyzeText } from '../../lib/analyzer'
+import { api } from '../../api/client'
 import { SENTIMENTS } from '../../data/seed'
 import Mascot from '../../components/brand/Mascot'
 import Button from '../../components/ui/Button'
@@ -21,10 +21,17 @@ export default function LiveDemo() {
   const [res, setRes] = useState(null)
   const [busy, setBusy] = useState(false)
 
-  const run = () => {
+  // виклик справжнього NLP-модуля на сервері: POST /api/analyze-text
+  const run = async () => {
     if (text.trim().length < 5) return setRes({ error: 'Введіть відгук мінімум із 5 символів' })
     setBusy(true)
-    setTimeout(() => { setRes(analyzeText(text)); setBusy(false) }, 650)
+    try {
+      setRes(await api.analyzeText(text))
+    } catch (e) {
+      setRes({ error: e.message })
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
