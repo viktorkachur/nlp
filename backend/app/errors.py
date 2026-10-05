@@ -21,6 +21,27 @@ def _body(status: int, message: str, fields: dict | None = None) -> dict:
     return body
 
 
+def _translate(err: dict) -> str:
+    """Українські повідомлення для типових помилок валідації Pydantic."""
+    ctx = err.get("ctx", {})
+    kind = err.get("type", "")
+    if kind == "value_error":
+        return err.get("msg", "").removeprefix("Value error, ")
+    messages = {
+        "missing": "Обов'язкове поле",
+        "string_too_short": f"Не менше {ctx.get('min_length')} символів",
+        "string_too_long": f"Не більше {ctx.get('max_length')} символів",
+        "greater_than_equal": f"Значення має бути не менше {ctx.get('ge')}",
+        "less_than_equal": f"Значення має бути не більше {ctx.get('le')}",
+        "literal_error": "Недопустиме значення",
+        "string_pattern_mismatch": "Недопустиме значення",
+        "int_parsing": "Очікується ціле число",
+        "string_type": "Очікується текст",
+        "json_invalid": "Некоректний JSON",
+    }
+    return messages.get(kind, "Некоректне значення")
+
+
 def register_handlers(app: FastAPI) -> None:
     @app.exception_handler(ApiError)
     async def api_error(_: Request, exc: ApiError):
@@ -31,8 +52,7 @@ def register_handlers(app: FastAPI) -> None:
         fields: dict[str, str] = {}
         for err in exc.errors():
             loc = [str(p) for p in err["loc"] if p not in ("body", "query", "path")]
-            msg = err.get("msg", "Некоректне значення")
-            fields[".".join(loc) or "body"] = msg.removeprefix("Value error, ")
+            fields[".".join(loc) or "body"] = _translate(err)
         return JSONResponse(_body(422, "Помилка валідації вхідних даних", fields), status_code=422)
 
     @app.exception_handler(StarletteHTTPException)
