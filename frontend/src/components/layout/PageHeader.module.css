@@ -1,0 +1,5 @@
+.head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
+.head h1 { font-size: clamp(28px, 4vw, 38px); }
+.head p { color: var(--ink-2); margin-top: 6px; max-width: 560px; }
+.hand { display: block; color: var(--orange); font-size: 24px; line-height: 1; margin-bottom: 4px; transform: rotate(-2deg); transform-origin: left; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }

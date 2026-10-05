@@ -1,0 +1,7 @@
+.tabs { display: inline-flex; gap: 2px; padding: 4px; background: var(--surface-2); border-radius: 12px; max-width: 100%; overflow-x: auto; }
+.tab { position: relative; border: 0; background: none; padding: 7px 14px; border-radius: 9px; font-weight: 700; font-size: 14px; color: var(--ink-2); white-space: nowrap; }
+.tab.active { color: var(--ink); }
+.thumb { position: absolute; inset: 0; background: var(--surface); border: 1.5px solid var(--ink); border-radius: 9px; box-shadow: 0 2px 0 0 var(--ink); }
+.label { position: relative; display: inline-flex; gap: 6px; align-items: center; }
+.label em { font-style: normal; font-size: 12px; background: var(--ink); color: #fff; border-radius: 99px; padding: 0 7px; line-height: 18px; }
+@media (max-width: 520px) { .tab { padding: 7px 10px; font-size: 13px; } }

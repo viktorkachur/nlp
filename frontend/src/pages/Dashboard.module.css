@@ -1,0 +1,32 @@
+.select { min-width: 220px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
+.stat { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-items: center; padding: 18px; position: relative; overflow: hidden; }
+.statIcon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; color: #fff; border: 1.5px solid var(--ink); }
+.statLabel { color: var(--ink-2); font-size: 13px; font-weight: 600; line-height: 1.2; }
+.statValue { font-size: 30px; letter-spacing: -0.03em; line-height: 1.1; }
+.spark { grid-column: 1 / -1; margin-top: 4px; opacity: 0.9; }
+.row2 { display: grid; grid-template-columns: 5fr 7fr; gap: 16px; margin-bottom: 16px; }
+.row2b { display: grid; grid-template-columns: 6fr 6fr; gap: 16px; margin-bottom: 16px; }
+.h { font-size: 19px; margin-bottom: 18px; }
+.donutRow { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; justify-content: center; }
+.donutNum { font-size: 34px; letter-spacing: -0.03em; display: block; line-height: 1; }
+.donutCap { color: var(--muted); font-size: 13px; }
+.legend { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; min-width: 190px; }
+.legend li { display: grid; grid-template-columns: 14px 1fr auto 34px; gap: 10px; align-items: center; }
+.legend i { width: 12px; height: 12px; border-radius: 4px; }
+.legend em { font-style: normal; color: var(--muted); font-size: 13px; text-align: right; }
+.insight { display: flex; align-items: center; gap: 22px; background: var(--yellow-soft); }
+.insight p { font-size: 17px; max-width: 760px; }
+.insightHand { color: var(--orange); font-size: 22px; display: block; }
+
+@media (max-width: 1050px) {
+  .grid4 { grid-template-columns: repeat(2, 1fr); }
+  .row2, .row2b { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .grid4 { gap: 10px; }
+  .stat { padding: 14px; }
+  .statValue { font-size: 24px; }
+  .insight { flex-direction: column; text-align: center; }
+  .select { min-width: 0; width: 100%; }
+}

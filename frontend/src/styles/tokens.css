@@ -1,0 +1,67 @@
+/* Дизайн-токени та базові стилі (палітра в дусі PostHog: тепле тло, графітовий текст, оранжевий акцент) */
+:root {
+  --bg: #eeefe9;
+  --surface: #fdfdf8;
+  --surface-2: #e5e7e0;
+  --ink: #151515;
+  --ink-2: #4d4f46;
+  --muted: #7d8074;
+  --line: #d3d5cb;
+  --orange: #f54e00;
+  --orange-soft: #ffe3d4;
+  --yellow: #f9bd2b;
+  --yellow-soft: #fdf0c4;
+  --blue: #1d4aff;
+  --blue-soft: #dde4ff;
+  --green: #3fa66b;
+  --green-soft: #d9f0e2;
+  --red: #e5392b;
+  --red-soft: #fbdcd8;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow-hard: 0 4px 0 0 var(--ink);
+  --shadow-soft: 0 10px 30px -12px rgba(21, 21, 21, 0.25);
+  --font: 'Onest Variable', system-ui, sans-serif;
+  --font-hand: 'Caveat', cursive;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, p { margin: 0; }
+h1, h2, h3 { letter-spacing: -0.02em; line-height: 1.1; font-weight: 800; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 6px; }
+
+.container { width: min(1180px, 100% - 40px); margin-inline: auto; }
+.hand { font-family: var(--font-hand); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* друк звіту у PDF */
+@media print {
+  body * { visibility: hidden; }
+  .print-area, .print-area * { visibility: visible; }
+  .print-area { position: absolute; inset: 0 auto auto 0; width: 100%; background: #fff; }
+  .no-print { display: none !important; }
+}

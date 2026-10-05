@@ -1,0 +1,48 @@
+.page { display: grid; grid-template-columns: 5fr 6fr; min-height: 100vh; }
+.aside { position: relative; overflow: hidden; background: var(--orange); color: #fff; padding: 32px 44px; display: flex; flex-direction: column; justify-content: space-between; }
+.asideMid { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; position: relative; z-index: 1; }
+.asideMid h2 { font-size: clamp(28px, 3vw, 40px); max-width: 420px; }
+.asideMid .hand { font-size: 26px; color: var(--yellow); }
+.aside ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-weight: 600; position: relative; z-index: 1; }
+.aside li { display: flex; gap: 10px; align-items: center; }
+.aside > :first-child { position: relative; z-index: 1; }
+.blob1, .blob2 { position: absolute; border-radius: 50%; }
+.blob1 { width: 420px; height: 420px; right: -140px; top: -120px; background: #ff7a33; animation: float 9s ease-in-out infinite; }
+.blob2 { width: 300px; height: 300px; left: -100px; bottom: -80px; background: #d93f00; animation: float 11s ease-in-out infinite reverse; }
+@keyframes float { 50% { transform: translate(24px, 18px) scale(1.05); } }
+
+.main { display: grid; place-items: center; padding: 28px 20px; }
+.box { width: min(430px, 100%); }
+.box h1 { font-size: 36px; margin-top: 22px; }
+.sub { color: var(--ink-2); margin: 8px 0 22px; }
+.form { display: flex; flex-direction: column; gap: 16px; }
+.pass { position: relative; }
+.eye { position: absolute; right: 8px; bottom: 6px; border: 0; background: none; width: 34px; height: 34px; display: grid; place-items: center; color: var(--muted); border-radius: 8px; }
+.eye:hover { color: var(--ink); background: var(--surface-2); }
+.meter { display: flex; align-items: center; gap: 5px; margin-top: -6px; }
+.meter i { flex: 1; height: 6px; border-radius: 4px; background: var(--surface-2); max-width: 54px; }
+.meter span { margin-left: 8px; font-size: 13px; color: var(--ink-2); font-weight: 600; }
+.formErr { background: var(--red-soft); color: var(--red); padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 14px; animation: shake 0.3s; }
+@keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+.demo { margin-top: 26px; padding: 16px; border: 1.5px dashed var(--ink-2); border-radius: var(--radius); display: flex; flex-direction: column; gap: 10px; background: var(--surface); }
+.demo .hand { color: var(--orange); font-size: 22px; line-height: 1; }
+.demo div { display: flex; gap: 8px; flex-wrap: wrap; }
+.demo button { border: 1.5px solid var(--ink); background: var(--yellow-soft); border-radius: 99px; padding: 5px 14px; font-weight: 700; font-size: 14px; transition: transform 0.15s, background 0.15s; }
+.demo button:hover { background: var(--yellow); transform: translateY(-2px); }
+.demo small { color: var(--muted); }
+.mobileLogo { display: none; margin-bottom: 20px; }
+.back { display: inline-flex; gap: 6px; align-items: center; border: 0; background: none; font-weight: 700; color: var(--ink-2); padding: 0; margin-bottom: 20px; }
+.back:hover { color: var(--orange); }
+.shield { width: 60px; height: 60px; border-radius: 18px; background: var(--green-soft); color: var(--green); display: grid; place-items: center; border: 1.5px solid var(--ink); box-shadow: 0 3px 0 var(--ink); }
+.code { display: flex; gap: 10px; justify-content: space-between; }
+.code input { width: 100%; max-width: 58px; aspect-ratio: 1; text-align: center; font-size: 26px; font-weight: 800; border: 1.5px solid var(--ink-2); border-radius: 12px; background: #fff; transition: all 0.15s; }
+.code input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 4px var(--yellow-soft); transform: translateY(-2px); }
+.codeErr input { border-color: var(--red); animation: shake 0.3s; }
+.hint { display: block; margin-top: 18px; color: var(--muted); text-align: center; }
+
+@media (max-width: 860px) {
+  .page { grid-template-columns: 1fr; }
+  .aside { display: none; }
+  .mobileLogo { display: block; }
+  .box h1 { font-size: 30px; }
+}

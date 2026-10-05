@@ -1,0 +1,10 @@
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 14px; font-weight: 700; }
+.control { width: 100%; padding: 11px 14px; background: #fff; border: 1.5px solid var(--line); border-radius: 10px; transition: border-color 0.15s, box-shadow 0.15s; }
+textarea.control { resize: vertical; min-height: 110px; }
+.control:hover { border-color: var(--ink-2); }
+.control:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 4px var(--yellow-soft); }
+.invalid { border-color: var(--red); background: #fff8f7; }
+.error { color: var(--red); font-size: 13px; font-weight: 600; animation: shake 0.3s; }
+.hint { color: var(--muted); font-size: 13px; }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }

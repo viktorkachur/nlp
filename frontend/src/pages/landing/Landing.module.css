@@ -1,0 +1,153 @@
+/* ---------- навігація ---------- */
+.nav { position: sticky; top: 0; z-index: 50; transition: background 0.2s, box-shadow 0.2s, border-color 0.2s; border-bottom: 1px solid transparent; }
+.navScrolled { background: rgba(238, 239, 233, 0.88); backdrop-filter: blur(10px); border-color: var(--line); }
+.navIn { display: flex; align-items: center; gap: 24px; height: 70px; }
+.navLinks { display: flex; gap: 4px; margin-left: 24px; flex: 1; }
+.navLinks button { border: 0; background: none; padding: 8px 14px; border-radius: 9px; font-weight: 700; color: var(--ink-2); }
+.navLinks button:hover { background: var(--surface-2); color: var(--ink); }
+.navCta { display: flex; gap: 8px; }
+.burger { display: none; border: 0; background: none; margin-left: auto; }
+.mobileMenu { overflow: hidden; display: flex; flex-direction: column; gap: 6px; padding: 8px 20px 18px; background: var(--bg); border-bottom: 1px solid var(--line); }
+.mobileMenu button:not(:last-child) { border: 0; background: none; text-align: left; font-weight: 700; padding: 10px 0; font-size: 17px; }
+
+/* ---------- hero ---------- */
+.hero { position: relative; overflow: hidden; padding: 40px 0 70px; }
+.glow1, .glow2 { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.55; pointer-events: none; }
+.glow1 { width: 420px; height: 420px; background: var(--yellow); right: -80px; top: -60px; animation: drift 12s ease-in-out infinite; }
+.glow2 { width: 360px; height: 360px; background: #ffb48f; left: -120px; bottom: -80px; animation: drift 14s ease-in-out infinite reverse; }
+@keyframes drift { 50% { transform: translate(30px, 24px); } }
+.heroGrid { position: relative; display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: center; }
+.badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: var(--surface); border: 1.5px solid var(--ink); border-radius: 99px; font-weight: 700; font-size: 14px; box-shadow: 0 2px 0 var(--ink); margin-bottom: 22px; }
+.badge svg { color: var(--green); }
+.hero h1 { font-size: clamp(38px, 5.4vw, 66px); line-height: 1.04; letter-spacing: -0.035em; }
+.hl { position: relative; display: inline-block; z-index: 0; }
+.hl svg { position: absolute; left: -2%; bottom: -4px; width: 104%; height: 0.38em; z-index: -1; }
+.lead { font-size: 19px; color: var(--ink-2); max-width: 520px; margin: 22px 0 28px; }
+.cta { display: flex; gap: 14px; flex-wrap: wrap; }
+.facts { list-style: none; display: flex; gap: 28px; padding: 0; margin: 34px 0 0; color: var(--ink-2); font-size: 14px; flex-wrap: wrap; }
+.facts b { display: block; font-size: 22px; color: var(--ink); letter-spacing: -0.02em; }
+
+.visual { position: relative; min-height: 420px; perspective: 1000px; }
+.dash { position: absolute; inset: 40px 20px 40px 30px; background: var(--surface); border: 1.5px solid var(--ink); border-radius: 20px; box-shadow: 0 10px 0 0 var(--ink); overflow: hidden; transform-style: preserve-3d; }
+.dashBar { display: flex; align-items: center; gap: 6px; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.dashBar i { width: 10px; height: 10px; border-radius: 50%; background: var(--orange); }
+.dashBar i:nth-child(2) { background: var(--yellow); }
+.dashBar i:nth-child(3) { background: var(--green); }
+.dashBar span { margin-left: 10px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.dashBody { display: flex; gap: 22px; align-items: center; justify-content: center; padding: 34px 20px; flex-wrap: wrap; }
+.miniBars { display: flex; flex-direction: column; gap: 14px; flex: 1; min-width: 150px; }
+.miniBars span { font-size: 12px; font-weight: 700; color: var(--ink-2); }
+.miniBars div div { height: 10px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin-top: 4px; }
+.miniBars i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+.bubble { position: absolute; display: flex; gap: 10px; align-items: flex-start; max-width: 230px; background: #fff; border: 1.5px solid var(--ink); border-radius: 14px; padding: 10px 14px; font-size: 13px; line-height: 1.35; box-shadow: 0 4px 0 var(--ink); z-index: 3; }
+.bubble i { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+.bubble span { display: block; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.heroMascot { position: absolute; right: -6px; bottom: -6px; z-index: 4; }
+
+/* ---------- marquee ---------- */
+.marquee { overflow: hidden; border-block: 1.5px solid var(--ink); background: var(--surface); padding: 14px 0; display: flex; flex-direction: column; gap: 8px; }
+.track { display: flex; gap: 34px; width: max-content; animation: scroll 38s linear infinite; font-weight: 800; font-size: 26px; letter-spacing: -0.02em; }
+.rev { animation-direction: reverse; }
+@keyframes scroll { to { transform: translateX(-50%); } }
+
+/* ---------- секції ---------- */
+.section { padding: 96px 0; }
+.dark { background: var(--ink); color: #fff; }
+.sTitle { text-align: center; max-width: 640px; margin: 0 auto 52px; }
+.sTitle .hand { color: var(--orange); font-size: 28px; display: block; transform: rotate(-2deg); }
+.sTitle h2 { font-size: clamp(30px, 4vw, 48px); margin: 4px 0 12px; }
+.sTitle p { color: var(--ink-2); font-size: 18px; }
+.dark .sTitle .hand { color: var(--yellow); }
+
+.featGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feat { height: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 26px; transition: border-color 0.2s, box-shadow 0.2s; }
+.feat:hover { border-color: var(--ink); box-shadow: 0 6px 0 var(--ink); }
+.featIcon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; color: #fff; border: 1.5px solid var(--ink); margin-bottom: 18px; }
+.feat h3 { font-size: 21px; margin-bottom: 8px; }
+.feat p { color: var(--ink-2); }
+
+.steps { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; text-align: center; }
+.stepLine { position: absolute; left: 0; right: 0; top: 40px; width: 100%; height: 12px; z-index: 0; }
+.step { position: relative; z-index: 1; }
+.stepIcon { position: relative; width: 82px; height: 82px; margin: 0 auto 20px; border-radius: 24px; background: var(--yellow); color: var(--ink); display: grid; place-items: center; border: 1.5px solid #fff; box-shadow: 0 5px 0 #fff3; }
+.stepIcon b { position: absolute; top: -10px; right: -10px; width: 30px; height: 30px; background: var(--orange); color: #fff; border-radius: 50%; display: grid; place-items: center; font-size: 15px; border: 2px solid var(--ink); }
+.step h3 { font-size: 22px; margin-bottom: 6px; }
+.step p { color: #c9cabf; max-width: 280px; margin: 0 auto; }
+
+.showWrap { background: var(--surface); border: 1.5px solid var(--ink); border-radius: 22px; padding: 28px; box-shadow: 0 8px 0 var(--ink); }
+.showBody { display: grid; grid-template-columns: 5fr 6fr; gap: 36px; align-items: center; margin-top: 26px; min-height: 280px; }
+.showBody h3 { font-size: 30px; margin-bottom: 12px; }
+.showBody p { color: var(--ink-2); font-size: 17px; }
+.showVisual { display: grid; place-items: center; padding: 10px; }
+.showDonut { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; justify-content: center; }
+.showDonut ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.showDonut li { display: flex; align-items: center; gap: 10px; }
+.showDonut li i { width: 12px; height: 12px; border-radius: 4px; }
+.showDonut li b { margin-left: 8px; }
+.paper { width: min(300px, 100%); background: #fff; border: 1.5px solid var(--ink); border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: 6px 6px 0 var(--yellow); transform: rotate(2deg); }
+.lines { display: flex; flex-direction: column; gap: 9px; }
+.lines i { display: block; height: 8px; background: var(--surface-2); border-radius: 4px; }
+.paperRow { display: flex; gap: 8px; }
+.paperRow span { padding: 3px 12px; border-radius: 99px; background: var(--orange-soft); color: #b83800; font-weight: 800; font-size: 12px; }
+.paperRow span:last-child { background: var(--green-soft); color: #23724a; }
+
+/* ---------- демо ---------- */
+.demoCard { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface); border: 1.5px solid var(--ink); border-radius: 22px; box-shadow: 0 8px 0 var(--ink); overflow: hidden; max-width: 960px; margin: 0 auto; }
+.demoIn { padding: 28px; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.demoIn textarea { width: 100%; resize: vertical; padding: 14px; border: 1.5px solid var(--line); border-radius: 12px; background: #fff; transition: border-color 0.15s, box-shadow 0.15s; }
+.demoIn textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 4px var(--yellow-soft); }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chips button { border: 1.5px solid var(--line); background: var(--bg); border-radius: 99px; padding: 4px 12px; font-size: 13px; font-weight: 700; }
+.chips button:hover { border-color: var(--ink); }
+.demoOut { background: var(--yellow-soft); padding: 28px; display: grid; place-items: center; min-height: 280px; border-left: 1.5px solid var(--ink); }
+.demoIdle { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; color: var(--ink-2); max-width: 260px; }
+.demoErr { color: var(--red); font-weight: 700; }
+.result { display: flex; gap: 20px; align-items: center; width: 100%; }
+.resBody { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; flex: 1; min-width: 0; }
+.gauge { width: 100%; font-size: 13px; font-weight: 700; display: flex; flex-direction: column; gap: 5px; }
+.gauge div { height: 12px; background: #fff; border: 1.5px solid var(--ink); border-radius: 99px; overflow: hidden; }
+.gauge i { display: block; height: 100%; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ---------- FAQ ---------- */
+.faqWrap { max-width: 780px; }
+.faq { display: flex; flex-direction: column; gap: 12px; }
+.qa { background: var(--surface); border: 1.5px solid var(--line); border-radius: 16px; transition: border-color 0.2s, box-shadow 0.2s; }
+.qaOpen { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink); }
+.qa button { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 0; background: none; padding: 18px 22px; text-align: left; font-size: 18px; font-weight: 700; }
+.qa p { padding: 0 22px 20px; color: var(--ink-2); overflow: hidden; }
+
+/* ---------- CTA і футер ---------- */
+.ctaWrap { padding: 20px 0 90px; }
+.ctaBox { position: relative; overflow: hidden; background: var(--orange); color: #fff; border: 1.5px solid var(--ink); border-radius: 28px; box-shadow: 0 10px 0 var(--ink); padding: 56px 28px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.ctaBox h2 { font-size: clamp(28px, 4vw, 44px); max-width: 640px; position: relative; }
+.ctaBox p { font-size: 18px; margin-bottom: 10px; position: relative; opacity: 0.95; }
+.ctaBox > svg, .ctaBox > a { position: relative; }
+.ctaBlob { position: absolute; width: 380px; height: 380px; border-radius: 50%; background: #ff7a33; right: -90px; top: -150px; animation: drift 10s ease-in-out infinite; }
+.footer { background: var(--ink); color: #c9cabf; padding: 34px 0; }
+.footIn { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 14px; }
+.footIn a { color: #fff; font-weight: 700; }
+
+/* ---------- адаптивність ---------- */
+@media (max-width: 960px) {
+  .navLinks, .navCta { display: none; }
+  .burger { display: block; }
+  .heroGrid { grid-template-columns: 1fr; }
+  .visual { min-height: 400px; }
+  .featGrid { grid-template-columns: repeat(2, 1fr); }
+  .showBody, .demoCard { grid-template-columns: 1fr; }
+  .demoOut { border-left: 0; border-top: 1.5px solid var(--ink); }
+}
+@media (max-width: 640px) {
+  .section { padding: 64px 0; }
+  .featGrid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; gap: 40px; }
+  .stepLine { display: none; }
+  .visual { min-height: 380px; }
+  .bubble { max-width: 180px; font-size: 12px; }
+  .showWrap { padding: 18px; }
+  .track { font-size: 20px; }
+  .result { flex-direction: column; text-align: center; }
+  .resBody { align-items: center; }
+  .footIn { justify-content: center; text-align: center; }
+}

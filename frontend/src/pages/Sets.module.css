@@ -1,0 +1,19 @@
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; }
+.card { display: flex; flex-direction: column; gap: 10px; height: 100%; }
+.cardTop { display: flex; justify-content: space-between; align-items: center; }
+.tools { display: flex; gap: 4px; }
+.tools button { border: 0; background: var(--surface-2); width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; color: var(--ink-2); }
+.tools button:hover { background: var(--orange-soft); color: var(--orange); }
+.name h3 { font-size: 22px; }
+.name:hover h3 { color: var(--orange); }
+.desc { color: var(--ink-2); font-size: 14px; min-height: 42px; }
+.progress { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.progress div { height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+.progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--orange), var(--yellow)); border-radius: 99px; }
+.foot { margin-top: auto; padding-top: 10px; border-top: 1px dashed var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+.foot span { display: inline-flex; gap: 6px; align-items: center; }
+.open { font-weight: 700; color: var(--ink); }
+.open:hover { color: var(--orange); }
+.form { display: flex; flex-direction: column; gap: 16px; }
+.formBtns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+.warn { margin-bottom: 14px; color: var(--ink-2); }

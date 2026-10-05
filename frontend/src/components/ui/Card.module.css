@@ -1,0 +1,4 @@
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+.lift { transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s; }
+.lift:hover { transform: translateY(-4px); border-color: var(--ink); box-shadow: 0 6px 0 0 var(--ink); }
+.accent { border: 1.5px solid var(--ink); box-shadow: var(--shadow-hard); }

@@ -1,0 +1,9 @@
+.badge { display: inline-flex; align-items: center; gap: 7px; padding: 3px 10px 3px 8px; border-radius: 999px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+.badge i { width: 8px; height: 8px; border-radius: 50%; }
+.pending { background: var(--surface-2); color: var(--muted); padding-left: 10px; }
+.pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.02em; }
+.t_neutral { background: var(--surface-2); color: var(--ink-2); }
+.t_orange { background: var(--orange-soft); color: #b83800; }
+.t_blue { background: var(--blue-soft); color: var(--blue); }
+.t_green { background: var(--green-soft); color: #23724a; }
+.t_yellow { background: var(--yellow-soft); color: #8a6200; }
